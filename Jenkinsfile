@@ -4,18 +4,19 @@ pipeline {
     stages {
         stage('setup') {
             steps {
-                bat 'docker-compose up'
-                bat 'mvn clean compile'
+                sh 'ls'
+                sh 'docker-compose up'
+                sh 'mvn clean compile'
             }
         }
         stage('test') {
             steps {
-                bat 'mvn surefire:test'
+                sh 'mvn surefire:test'
             }
         }
         stage('teardown') {
             steps {
-                bat 'docker-compose down'
+                sh 'docker-compose down'
             }
         }
     }
