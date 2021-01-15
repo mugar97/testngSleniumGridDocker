@@ -18,7 +18,7 @@ jobs:
           name: install selenium-chrome-node
           command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -v /dev/shm:/dev/shm selenium/node-chrome
       - run:
-          name: install selenium-chrome-node
+          name: install selenium-firefox-node
           command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -v /dev/shm:/dev/shm selenium/node-firefox
       - run:
           name: Generate Cache Checksum
