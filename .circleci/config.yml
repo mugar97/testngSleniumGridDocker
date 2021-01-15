@@ -1,8 +1,9 @@
 version: 2
 jobs:
-  setup_project:
+  build:
     docker:
       - image: circleci/openjdk:8-jdk-browsers
+      - image: selenium/standalone-chrome
     steps:
       - checkout
       - run:
@@ -16,27 +17,12 @@ jobs:
       - run:
           name: Preparing tests
           command: mvn verify --settings 'pom.xml' -DskipTests=true
-  test_chrome:
-    docker:
-      - image: circleci/openjdk:8-jdk-browsers
-      - image: selenium/standalone-chrome
-    steps:
       - run:
           name: Run Tests on Chrome
           command: mvn surefire:test -DskipTests=false -Dbrowser=chrome
-  test_firefox:
-    docker:
-        - image: circleci/openjdk:8-jdk-browsers
-        - image: selenium/standalone-firefox
-    steps:
       - run:
           name: Run Tests on Firefox
           command: mvn surefire:test -DskipTests=false -Dbrowser=firefox
-  report:
-    steps:
-      docker:
-        - image: circleci/openjdk:8-jdk-browsers
-      steps:
       - save_cache:
           paths:
             - ~/.m2
@@ -46,8 +32,5 @@ jobs:
 workflows:
   maven_test:
     jobs:
-      - setup_project
-      - test_chrome
-      - test_firefox
-      - report
+      - build
   version: 2
