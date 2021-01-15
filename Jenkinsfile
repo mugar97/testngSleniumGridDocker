@@ -1,21 +1,30 @@
+def ex(cmd) {
+    if (Boolean.valueOf(isUnix())) {
+        sh cmd
+    }
+    else {
+        bat cmd
+    }
+}
+
 pipeline {
     agent any
 
     stages {
         stage('setup') {
             steps {
-                bat 'docker-compose up'
-                bat 'mvn clean compile'
+                ex 'docker-compose up'
+                ex 'mvn clean compile'
             }
         }
         stage('test') {
             steps {
-                bat 'mvn surefire:test'
+                ex 'mvn surefire:test'
             }
         }
         stage('teardown') {
             steps {
-                bat 'docker-compose down'
+                ex 'docker-compose down'
             }
         }
     }
