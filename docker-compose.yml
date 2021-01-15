@@ -19,10 +19,3 @@ services:
     environment:
       - HUB_HOST=selenium-hub
       - HUB_PORT=4444
-  opera:
-    image: selenium/node-opera
-    depends_on:
-      - selenium-hub
-    environment:
-      - HUB_HOST=selenium-hub
-      - HUB_PORT=4444
