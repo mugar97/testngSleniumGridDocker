@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+      - image: selenium/standalone-chrome
+    steps:
+      - checkout
+      - run:
+          name: Generate Cache Checksum
+          command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
+      - restore_cache:
+          key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+      - run:
+          name: Install Dependencies
+          command: mvn dependency:go-offline --settings 'pom.xml'
+      - run:
+          name: Preparing tests
+          command: mvn verify --settings 'pom.xml' -DskipTests=true
+      - run:
+          name: Run Tests on Chrome
+          command: mvn surefire:test -DskipTests=false -Dbrowser=chrome
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+      - store_test_results:
+          path: target/surefire-reports
+workflows:
+  maven_test:
+    jobs:
+      - build
+  version: 2

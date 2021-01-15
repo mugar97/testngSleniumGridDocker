@@ -1,19 +1,15 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite thread-count="2" name="Suite" parallel="tests" >
-    <test name="com.FirstTest" parallel="tests" thread-count="5">
-        <parameter name="browser" value="chrome"/>
+    <test name="com.FirstTest" parallel="methods" thread-count="5">
+        <parameter name="browser" value=""/>
         <classes>
             <class name="FirstTest">
                 <methods>
                     <include name="google1" />
                     <include name="google2" />
+                    <include name="google3" />
                 </methods>
             </class>
-        </classes>
-    </test> <!-- First Test -->
-    <test name="com.SecondTest"  parallel="methods" thread-count="5">
-        <parameter name="browser" value="firefox"/>
-        <classes>
             <class name="SecondTest">
                 <methods>
                     <include name="google4" />
@@ -21,5 +17,5 @@
                 </methods>
             </class>
         </classes>
-    </test> <!-- Second Test -->
-</suite> <!-- Suite -->
+    </test>
+</suite>
