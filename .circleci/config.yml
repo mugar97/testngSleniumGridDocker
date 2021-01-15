@@ -3,9 +3,6 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:8-jdk-node
-      - image: selenium/hub
-      - image: selenium/node-chrome
-      - image: selenium/node-firefox
     steps:
       - checkout
       - setup_remote_docker
@@ -17,10 +14,10 @@ jobs:
           command: docker run -d --rm -p 4444:4444 --net grid --name selenium-hub selenium/hub
       - run:
           name: install selenium-chrome-node
-          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub selenium/node-chrome
+          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -e HUB_PORT_4444_TCP_ADDR=selenium-hub -e HUB_PORT_4444_TCP_PORT=4444 selenium/node-chrome
       - run:
           name: install selenium-firefox-node
-          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub selenium/node-firefox
+          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -e HUB_PORT_4444_TCP_ADDR=selenium-hub -e HUB_PORT_4444_TCP_PORT=4444 selenium/node-firefox
       - run:
           name: Generate Cache Checksum
           command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
