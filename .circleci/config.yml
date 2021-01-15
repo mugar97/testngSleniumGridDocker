@@ -1,23 +1,10 @@
 version: 2
 jobs:
-  build:
+  setup_project:
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
       - checkout
-      - setup_remote_docker
-      - run:
-          name: create docker network
-          command: docker network create grid
-      - run:
-          name: install selenium-hub
-          command: docker run -d --rm -p 4444:4444 --net grid --name selenium-hub selenium/hub
-      - run:
-          name: install selenium-chrome-node
-          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -e HUB_PORT_4444_TCP_ADDR=selenium-hub -e HUB_PORT_4444_TCP_PORT=4444 selenium/node-chrome
-      - run:
-          name: install selenium-firefox-node
-          command: docker run -d --rm --net grid -e HUB_HOST=selenium-hub -e HUB_PORT_4444_TCP_ADDR=selenium-hub -e HUB_PORT_4444_TCP_PORT=4444 selenium/node-firefox
       - run:
           name: Generate Cache Checksum
           command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
@@ -27,8 +14,26 @@ jobs:
           name: Install Dependencies
           command: mvn dependency:go-offline --settings 'pom.xml'
       - run:
-          name: Run Tests
-          command: mvn verify --settings 'pom.xml'
+          name: Preparing tests
+          command: mvn verify --settings 'pom.xml' -DskipTests=true
+  test_chrome:
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+      - image: selenium/standalone-chrome
+    steps:
+      - run:
+          name: Run Tests on Chrome
+          command: mvn surefire:test -DskipTests=false -Dbrowser=chrome
+  test_firefox:
+    docker:
+        - image: circleci/openjdk:8-jdk-browsers
+        - image: selenium/standalone-firefox
+    steps:
+      - run:
+          name: Run Tests on Firefox
+          command: mvn surefire:test -DskipTests=false -Dbrowser=firefox
+  report:
+    steps:
       - save_cache:
           paths:
             - ~/.m2
@@ -38,5 +43,8 @@ jobs:
 workflows:
   maven_test:
     jobs:
-      - build
+      - setup_project
+      - test_chrome
+      - test_firefox
+      - report
   version: 2

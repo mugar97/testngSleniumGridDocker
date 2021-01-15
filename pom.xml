@@ -15,6 +15,8 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <slf4j.version>2.0.0-alpha1</slf4j.version>
+        <skipTests></skipTests>
+        <browser></browser>
     </properties>
 
     <dependencies>
@@ -50,6 +52,10 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>TestNG.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <systemProperties>
+                        <browser>${browser}</browser>
+                    </systemProperties>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
         </plugins>
